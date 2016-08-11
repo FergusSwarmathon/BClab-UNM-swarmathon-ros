@@ -17,9 +17,9 @@
 #ifndef ROVERGUIPLUGIN_H
 #define ROVERGUIPLUGIN_H
 
-#include "gazebo/physics/physics.hh"
-#include "gazebo/common/common.hh"
-#include "gazebo/gazebo.hh"
+#include <gazebo/physics/physics.hh>
+#include <gazebo/common/common.hh>
+#include <gazebo/gazebo.hh>
 
 #include <rqt_gui_cpp/plugin.h>
 #include <ui_rover_gui_plugin.h>
