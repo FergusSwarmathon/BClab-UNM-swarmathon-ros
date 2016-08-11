@@ -9,6 +9,10 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
 )
 
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
+
 catkin_package(
   CATKIN_DEPENDS geometry_msgs roscpp sensor_msgs std_msgs message_filters
 )

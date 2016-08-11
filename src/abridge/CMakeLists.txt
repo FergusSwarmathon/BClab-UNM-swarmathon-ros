@@ -10,11 +10,16 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
 )
 
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
+
 catkin_package(
   CATKIN_DEPENDS geometry_msgs roscpp sensor_msgs std_msgs tf nav_msgs
 )
 
 include_directories(
+  ${catkin_INCLUDE_DIRS}
   include
 )
 

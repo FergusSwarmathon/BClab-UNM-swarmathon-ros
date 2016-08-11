@@ -3,6 +3,10 @@ project(rqt_rover_gui)
 
 set(CMAKE_BUILD_TYPE Debug)
 
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
+
 #Get version info from git and pass it into compiled code
 execute_process(COMMAND git describe --tags --abbrev=0
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
