@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.11)
 project(rqt_rover_gui)
 
 set(CMAKE_BUILD_TYPE Debug)
@@ -11,25 +11,23 @@ set(CMAKE_AUTOMOC ON)
 # to always look for includes there:
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Widgets finds its own dependencies (QtGui and QtCore).
-find_package(Qt5Widgets REQUIRED)
-
-# The Qt5Widgets_INCLUDES also includes the include directories for
-# dependencies QtCore and QtGui. Also include the Gazebo and catkin ROS headers.
-include_directories(${Qt5Widgets_INCLUDES}
-  ${catkin_INCLUDE_DIRS}
-  ${GAZEBO_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_BINARY_DIR} # For compile time Version files
-  include
-  src
-  )
-
-# We need add -DQT_WIDGETS_LIB when using QtWidgets in Qt 5.
-add_definitions(${Qt5Widgets_DEFINITIONS})
 add_definitions("-std=c++11")
 
+find_package(Qt5 REQUIRED COMPONENTS Widgets Core Xml)
+
+find_package(catkin REQUIRED 
+  rqt_gui
+  rqt_gui_cpp
+  roscpp
+  cv_bridge
+  image_transport
+  shared_messages
+  geometry_msgs
+  gazebo
+)
+
 # Executables fail to build with Qt 5 in the default configuration
-# without -fPIE. We add that here. Also add the C++ 11 directive.
+# without -fPIE. We add that here. Also add the C++ 11  and Gazebo directives.
 set("-std=c++11 ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 set(CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
@@ -47,16 +45,22 @@ string(STRIP ${BUILD_TIME} BUILD_TIME)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/Version.cpp)
 set(version_file "${CMAKE_CURRENT_BINARY_DIR}/Version.cpp")
 
-find_package(catkin REQUIRED COMPONENTS 
-  rqt_gui
-  rqt_gui_cpp
-  cv_bridge
-  image_transport
-  shared_messages
-  geometry_msgs
-)
+# We need add -DQT_WIDGETS_LIB when using QtWidgets in Qt 5.
+add_definitions(${Qt5Widgets_DEFINITIONS})
 
-find_package(gazebo REQUIRED)
+# Have to add the include directories after finding the related packages
+# The Qt5Widgets_INCLUDES also includes the include directories for
+# dependencies QtCore and QtGui. Also include the Gazebo and catkin ROS headers.
+include_directories(
+  ${Qt5Widgets_INCLUDES}
+  ${Qt5Xml_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_BINARY_DIR} # For compile time Version files
+  include
+  src
+  )
+
 link_directories(${GAZEBO_LIBRARY_DIRS})
 
 catkin_package(
@@ -66,7 +70,6 @@ catkin_package(
 SET(rover_gui_plugin_RESOURCES resources/resources.qrc)
 
 qt5_wrap_cpp(
-  rover_gui_plugin_MOCS
   src/rover_gui_plugin.h
   src/CameraFrame.h
   src/MapFrame.h
@@ -113,7 +116,8 @@ target_link_libraries(
   ${GAZEBO_libraries}
   ${catkin_LIBRARIES}
   #The following includes the QtCore and QtGui
-  ${Qt5Widgets_LIBRARIES} 
-)
+  ${Qt5Widgets_LIBRARIES}
+  ${Qt5Xml_LIBRARIES}
+ )
 
 catkin_python_setup()
