@@ -31,7 +31,7 @@ class USFrame : public QFrame
 {
     Q_OBJECT
 public:
-    USFrame(QWidget *parent, Qt::WFlags = 0);
+    USFrame(QWidget *parent, Qt::WindowFlags = 0);
     void setCenterRange(float r, float min, float max);
     void setLeftRange(float r, float min, float max);
     void setRightRange(float r, float min, float max);

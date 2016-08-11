@@ -27,7 +27,7 @@ class GPSFrame : public QFrame
 {
     Q_OBJECT
 public:
-    GPSFrame(QWidget *parent, Qt::WFlags = 0);
+    GPSFrame(QWidget *parent, Qt::WindowFlags = 0);
 
 
 signals:

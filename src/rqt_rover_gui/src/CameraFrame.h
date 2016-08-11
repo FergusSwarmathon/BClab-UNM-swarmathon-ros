@@ -27,7 +27,7 @@ class CameraFrame : public QFrame
 {
     Q_OBJECT
 public:
-    CameraFrame(QWidget *parent, Qt::WFlags = 0);
+    CameraFrame(QWidget *parent, Qt::WindowFlags = 0);
 
     void setImage(const QImage& image);
     // four corners of tag

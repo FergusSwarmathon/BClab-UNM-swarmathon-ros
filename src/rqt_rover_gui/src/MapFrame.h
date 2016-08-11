@@ -32,7 +32,7 @@ class MapFrame : public QFrame
 {
     Q_OBJECT
 public:
-    MapFrame(QWidget *parent, Qt::WFlags = 0);
+    MapFrame(QWidget *parent, Qt::WindowFlags = 0);
 
     void setRoverMapToDisplay(string rover);
 

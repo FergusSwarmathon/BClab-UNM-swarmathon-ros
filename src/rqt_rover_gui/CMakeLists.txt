@@ -15,15 +15,24 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5Widgets REQUIRED)
 
 # The Qt5Widgets_INCLUDES also includes the include directories for
-# dependencies QtCore and QtGui. Also include the ROS headers
-include_directories(${Qt5Widgets_INCLUDES} ${catkin_INCLUDE_DIRS})
+# dependencies QtCore and QtGui. Also include the Gazebo and catkin ROS headers.
+include_directories(${Qt5Widgets_INCLUDES}
+  ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_BINARY_DIR} # For compile time Version files
+  include
+  src
+  )
 
 # We need add -DQT_WIDGETS_LIB when using QtWidgets in Qt 5.
 add_definitions(${Qt5Widgets_DEFINITIONS})
+add_definitions("-std=c++11")
 
 # Executables fail to build with Qt 5 in the default configuration
-# without -fPIE. We add that here.
+# without -fPIE. We add that here. Also add the C++ 11 directive.
+set("-std=c++11 ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
 #Get version info from git and pass it into compiled code
 execute_process(COMMAND git describe --tags --abbrev=0
@@ -38,8 +47,6 @@ string(STRIP ${BUILD_TIME} BUILD_TIME)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/Version.cpp)
 set(version_file "${CMAKE_CURRENT_BINARY_DIR}/Version.cpp")
 
-set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
-
 find_package(catkin REQUIRED COMPONENTS 
   rqt_gui
   rqt_gui_cpp
@@ -50,9 +57,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(gazebo REQUIRED)
-include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
-#list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
 catkin_package(
   CATKIN_DEPENDS rqt_gui rqt_gui_cpp cv_bridge image_transport shared_messages geometry_msgs
@@ -77,12 +82,6 @@ qt5_wrap_ui(
   src/rover_gui_plugin.ui
 )
 
-include_directories(
-  include
-  src
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
-
 link_directories(
   lib
 )
@@ -91,8 +90,8 @@ add_library(
   rqt_rover_gui
   ${version_file}
   src/GazeboSimManager.cpp
-  src/JoystickGripperInterface.cpp
   src/rover_gui_plugin.cpp
+  src/JoystickGripperInterface.cpp
   src/CameraFrame.cpp
   src/MapFrame.cpp
   src/USFrame.cpp
